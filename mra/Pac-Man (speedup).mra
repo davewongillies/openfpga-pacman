@@ -1,0 +1,33 @@
+<misterromdescription>
+	<name>Pac-Man (speedup)</name>
+	<setname>pacmanf</setname>
+	<rbf>pacman</rbf>
+	<mameversion>0220</mameversion>
+	<year>1980</year>
+	<manufacturer>hack</manufacturer>
+	<category>Maze</category>
+	<rotation>vertical (cw)</rotation>
+
+	<!-- openFPGA: index 0 assembles the flat .rom (matches tools/build_roms.py).
+	     mod byte 0 (Pac-Man) is set by the instance JSON, not this ROM.
+	     pacfast.6f is the speedup program ROM; the rest fall back to pacman.zip. -->
+	<rom index="0" zip="pacmanf.zip|pacman.zip">
+		<part crc="c1e6ab10" name="pacman.6e"></part>
+		<part crc="720dc3ee" name="pacfast.6f"></part>
+		<part crc="bcdd1beb" name="pacman.6h"></part>
+		<part crc="817d94e3" name="pacman.6j"></part>
+		<part crc="c1e6ab10" name="pacman.6e"></part>
+		<part crc="720dc3ee" name="pacfast.6f"></part>
+		<part crc="bcdd1beb" name="pacman.6h"></part>
+		<part crc="817d94e3" name="pacman.6j"></part>
+		<part crc="0c944964" name="pacman.5e"></part>
+		<part crc="958fedf9" name="pacman.5f"></part>
+		<part crc="0c944964" name="pacman.5e"></part>
+		<part crc="958fedf9" name="pacman.5f"></part>
+		<part crc="a9cc86bf" name="82s126.1m"></part>
+		<part crc="3eb3a8e4" name="82s126.4a"></part>
+		<part crc="77245b66" name="82s126.3m"></part>
+		<part crc="2fc650bd" name="82s123.7f"></part>
+	</rom>
+	<rom index="1"></rom>
+</misterromdescription>
