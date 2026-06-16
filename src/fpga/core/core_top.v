@@ -328,11 +328,7 @@ always @(*) begin
     32'hF8xxxxxx: begin
         bridge_rd_data <= cmd_bridge_rd_data;
     end
-    // DIP readback. The interact OSD does a per-frame read-modify-write, so each
-    // configurable address MUST return its live value -- otherwise the readback is
-    // 0, the menu re-highlights the top option every frame, and selections never
-    // stick. Same registers written in the bridge_wr block below, same clk_74a
-    // domain (no CDC). Required unless the interact var is "writeonly": true.
+    // DIP readback -- interact OSD reads each value back per frame
     32'h50000004: begin bridge_rd_data <= {30'd0, dip_coin};  end
     32'h50000008: begin bridge_rd_data <= {30'd0, dip_life};  end
     32'h5000000C: begin bridge_rd_data <= {30'd0, dip_bonus}; end
