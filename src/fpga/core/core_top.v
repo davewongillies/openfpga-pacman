@@ -553,6 +553,27 @@ assign video_hs = vidout_hs;
     wire in_window = (hcnt + BORDER >= h_start) && (hcnt + 10'd1 <= h_end + BORDER) &&
                      (vcnt + BORDER >= v_start + 10'd1) && (vcnt <= v_end + BORDER);
 
+    // Pac-Man color DAC: the PROM bits drive a resistor ladder (R/G via
+    // 1000/470/220 ohm, B via 470/220 ohm), not a binary-weighted DAC. These
+    // weights match MAME's compute_resistor_weights, so intermediate shades
+    // hit the real board's analog levels instead of bit-replication's approx.
+    function [7:0] dac_rg;
+        input [2:0] c;
+        case (c)
+            3'd0: dac_rg = 8'd0;   3'd1: dac_rg = 8'd33;
+            3'd2: dac_rg = 8'd71;  3'd3: dac_rg = 8'd104;
+            3'd4: dac_rg = 8'd151; 3'd5: dac_rg = 8'd184;
+            3'd6: dac_rg = 8'd222; 3'd7: dac_rg = 8'd255;
+        endcase
+    endfunction
+    function [7:0] dac_b;
+        input [1:0] c;
+        case (c)
+            2'd0: dac_b = 8'd0;   2'd1: dac_b = 8'd81;
+            2'd2: dac_b = 8'd174; 2'd3: dac_b = 8'd255;
+        endcase
+    endfunction
+
 always @(posedge clk_pix) begin
     hs_d <= core_hsync;  vs_d <= core_vsync;
     hb_d <= core_hblank; vb_d <= core_vblank;
@@ -576,9 +597,7 @@ always @(posedge clk_pix) begin
     vidout_vs   <= core_vsync;
     vidout_de   <= in_window;
     vidout_rgb  <= (core_hblank | core_vblank) ? 24'h0 :
-                   { core_r, core_r, core_r[2:1],
-                     core_g, core_g, core_g[2:1],
-                     core_b, core_b, core_b, core_b };
+                   { dac_rg(core_r), dac_rg(core_g), dac_b(core_b) };
 end
 
 
