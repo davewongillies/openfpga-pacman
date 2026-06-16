@@ -595,18 +595,24 @@ end
     // O_AUDIO over each 48 kHz frame (512 clk_sys = exactly 2 multiplex windows =
     // 2 samples per voice) to recover that sum and anti-alias before sound_i2s
     // point-samples it. sum/512 -> bits [18:9].
-    reg [8:0]  aud_div     = 9'd0;
-    reg [19:0] aud_acc     = 20'd0;
-    reg [9:0]  pac_audio_s = 10'd0;
+    // Then a 1st-order IIR low-pass models the board's analog output stage (the
+    // raw stepped WSG is harsh without it). cutoff ~= clk_audio/(2*pi*2^AUD_LPF_K)
+    // i.e. ~5 kHz at K=1; AUD_LPF_K is the single tuning knob. aud_lpf is 10.8
+    // fixed-point; input is non-negative so the state stays non-negative.
+    localparam [2:0]   AUD_LPF_K = 3'd1;
+    reg  [8:0]         aud_div = 9'd0;
+    reg  [19:0]        aud_acc = 20'd0;
+    reg  signed [18:0] aud_lpf = 19'd0;
     always @(posedge clk_sys) begin
         aud_div <= aud_div + 9'd1;
         if (aud_div == 9'd511) begin
-            pac_audio_s <= aud_acc[18:9];
-            aud_acc     <= pac_audio;        // seed next frame with this sample
+            aud_lpf <= aud_lpf + (($signed({1'b0, aud_acc[18:9], 8'd0}) - aud_lpf) >>> AUD_LPF_K);
+            aud_acc <= pac_audio;            // seed next 48 kHz frame with this sample
         end else begin
-            aud_acc     <= aud_acc + pac_audio;
+            aud_acc <= aud_acc + pac_audio;
         end
     end
+    wire [9:0] pac_audio_s = aud_lpf[17:8]; // box-avg + analog-model low-pass
 
     sound_i2s #(
         .CHANNEL_WIDTH (10),
