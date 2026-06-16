@@ -36,6 +36,7 @@ echo "=== [$(stamp)] stage SD package -> dist/Cores/TheDiscordian.PacMan ==="
 mkdir -p "$CORE_DIR"
 cp -f "$OUT" "$CORE_DIR/bitstream.rbf_r"
 cp -f "$ROOT"/{core,data,video,audio,input,interact,variants}.json "$CORE_DIR/"
+cp -f "$ROOT/info.txt" "$CORE_DIR/"
 cp -f "$ROOT/dist/icon.bin" "$CORE_DIR/" 2>/dev/null || true
 
 echo "=== [$(stamp)] DONE. Deploy dist/ to the Pocket SD (Cores/Platforms/Assets)."
