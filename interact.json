@@ -3,45 +3,45 @@
         "magic": "APF_VER_1",
         "variables": [
             {
-                "name": "Coinage", "id": 1, "type": "list",
+                "name": "Coinage", "id": "0x01", "type": "list",
                 "enabled": true, "persist": true,
-                "address": "0x50000004", "defaultval": 1,
+                "address": "0x50000004", "defaultval": "0x01",
                 "options": [
-                    { "value": 0, "name": "Free Play" },
-                    { "value": 1, "name": "1 Coin / 1 Credit" },
-                    { "value": 2, "name": "1 Coin / 2 Credits" },
-                    { "value": 3, "name": "2 Coins / 1 Credit" }
+                    { "value": "0x00", "name": "Free Play" },
+                    { "value": "0x01", "name": "1 Coin / 1 Credit" },
+                    { "value": "0x02", "name": "1 Coin / 2 Credits" },
+                    { "value": "0x03", "name": "2 Coins / 1 Credit" }
                 ]
             },
             {
-                "name": "Lives", "id": 2, "type": "list",
+                "name": "Lives", "id": "0x02", "type": "list",
                 "enabled": true, "persist": true,
-                "address": "0x50000008", "defaultval": 2,
+                "address": "0x50000008", "defaultval": "0x02",
                 "options": [
-                    { "value": 0, "name": "1" },
-                    { "value": 1, "name": "2" },
-                    { "value": 2, "name": "3" },
-                    { "value": 3, "name": "5" }
+                    { "value": "0x00", "name": "1" },
+                    { "value": "0x01", "name": "2" },
+                    { "value": "0x02", "name": "3" },
+                    { "value": "0x03", "name": "5" }
                 ]
             },
             {
-                "name": "Bonus Life", "id": 3, "type": "list",
+                "name": "Bonus Life", "id": "0x03", "type": "list",
                 "enabled": true, "persist": true,
-                "address": "0x5000000C", "defaultval": 0,
+                "address": "0x5000000C", "defaultval": "0x00",
                 "options": [
-                    { "value": 0, "name": "10000" },
-                    { "value": 1, "name": "15000" },
-                    { "value": 2, "name": "20000" },
-                    { "value": 3, "name": "None" }
+                    { "value": "0x00", "name": "10000" },
+                    { "value": "0x01", "name": "15000" },
+                    { "value": "0x02", "name": "20000" },
+                    { "value": "0x03", "name": "None" }
                 ]
             },
             {
-                "name": "Difficulty", "id": 4, "type": "list",
+                "name": "Difficulty", "id": "0x04", "type": "list",
                 "enabled": true, "persist": true,
-                "address": "0x50000010", "defaultval": 1,
+                "address": "0x50000010", "defaultval": "0x01",
                 "options": [
-                    { "value": 0, "name": "Hard" },
-                    { "value": 1, "name": "Normal" }
+                    { "value": "0x00", "name": "Hard" },
+                    { "value": "0x01", "name": "Normal" }
                 ]
             }
         ],
