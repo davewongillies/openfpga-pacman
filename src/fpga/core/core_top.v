@@ -743,22 +743,19 @@ mf_pllbase mp1 (
     assign datatable_data = dt_data;
     assign datatable_wren = dt_wren;
 
-    // Controllers -> Pac-Man IN0/IN1 (active-low). cont1 = player 1, cont2 =
-    // player 2 (dock). IN1 layout matches MiSTer: bit7 = Cabinet DIP (1=upright),
-    // bit6 = 2P start, bit5 = 1P start, bits[3:0] = P2 joystick (read in cocktail).
-    wire m_up    = cont1_key[0];
-    wire m_down  = cont1_key[1];
-    wire m_left  = cont1_key[2];
-    wire m_right = cont1_key[3];
-    wire m_start = cont1_key[15];
-    wire m_up_2    = cont2_key[0];
-    wire m_down_2  = cont2_key[1];
-    wire m_left_2  = cont2_key[2];
-    wire m_right_2 = cont2_key[3];
-    wire m_start_2 = cont2_key[15];
-    wire m_coin  = cont1_key[14] | cont2_key[14];     // either controller inserts a coin
-    wire [7:0] pac_in0 = { 1'b1, 1'b1, ~m_coin,  1'b1, ~m_down,   ~m_right,   ~m_left,   ~m_up   };
-    wire [7:0] pac_in1 = { dip_cabinet, ~m_start_2, ~m_start, 1'b1, ~m_down_2, ~m_right_2, ~m_left_2, ~m_up_2 };
+    // Controllers -> Pac-Man IN0/IN1 (active-low). cont1 = player 1; cont2 MIRRORS
+    // P1's controls (so a second player uses their own pad), except cont2's start
+    // maps to 2P start. Upright only (no cocktail screen-flip). IN1: bit7=upright,
+    // bit6=2P start, bit5=1P start.
+    wire m_up    = cont1_key[0]  | cont2_key[0];
+    wire m_down  = cont1_key[1]  | cont2_key[1];
+    wire m_left  = cont1_key[2]  | cont2_key[2];
+    wire m_right = cont1_key[3]  | cont2_key[3];
+    wire m_coin  = cont1_key[14] | cont2_key[14];     // either pad inserts a coin
+    wire m_start   = cont1_key[15];                   // 1P start
+    wire m_start_2 = cont2_key[15];                   // 2P start
+    wire [7:0] pac_in0 = { 1'b1, 1'b1, ~m_coin,    1'b1, ~m_down, ~m_right, ~m_left, ~m_up };
+    wire [7:0] pac_in1 = { 1'b1, ~m_start_2, ~m_start, 1'b1, 1'b1,   1'b1,     1'b1,    1'b1 };
 
     // Per-game variant: each game's instance JSON pushes its mod value to bridge
     // address VARIANT_ADDR via a memory_write (the standard Pocket mechanism, so
@@ -777,17 +774,15 @@ mf_pllbase mp1 (
     // 0..3 field value to its bridge address). dipsw1 assembled to the MRA byte;
     // defaults reproduce 0xC9 (1C/1C, 3 lives, bonus@10000, normal). dip_cabinet
     // drives IN1[7] (1=upright, 0=cocktail -> reads player-2 controls).
-    reg [1:0] dip_coin    = 2'd1;   // 0x50000004  0=Free 1=1C/1C 2=1C/2C 3=2C/1C
-    reg [1:0] dip_life    = 2'd2;   // 0x50000008  0=1 1=2 2=3 3=5
-    reg [1:0] dip_bonus   = 2'd0;   // 0x5000000C  0=10000 1=15000 2=20000 3=None
-    reg       dip_diff    = 1'b1;   // 0x50000010  0=Hard 1=Normal
-    reg       dip_cabinet = 1'b1;   // 0x50000014  0=Cocktail 1=Upright
+    reg [1:0] dip_coin  = 2'd1;   // 0x50000004  0=Free 1=1C/1C 2=1C/2C 3=2C/1C
+    reg [1:0] dip_life  = 2'd2;   // 0x50000008  0=1 1=2 2=3 3=5
+    reg [1:0] dip_bonus = 2'd0;   // 0x5000000C  0=10000 1=15000 2=20000 3=None
+    reg       dip_diff  = 1'b1;   // 0x50000010  0=Hard 1=Normal
     always @(posedge clk_74a) if (bridge_wr) case (bridge_addr)
-        32'h50000004: dip_coin    <= bridge_wr_data[1:0];
-        32'h50000008: dip_life    <= bridge_wr_data[1:0];
-        32'h5000000C: dip_bonus   <= bridge_wr_data[1:0];
-        32'h50000010: dip_diff    <= bridge_wr_data[0];
-        32'h50000014: dip_cabinet <= bridge_wr_data[0];
+        32'h50000004: dip_coin  <= bridge_wr_data[1:0];
+        32'h50000008: dip_life  <= bridge_wr_data[1:0];
+        32'h5000000C: dip_bonus <= bridge_wr_data[1:0];
+        32'h50000010: dip_diff  <= bridge_wr_data[0];
     endcase
     wire [7:0] pac_dipsw1 = { 1'b1, dip_diff, dip_bonus, dip_life, dip_coin }; // names=normal
 

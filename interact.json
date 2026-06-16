@@ -43,15 +43,6 @@
                     { "value": 0, "name": "Hard" },
                     { "value": 1, "name": "Normal" }
                 ]
-            },
-            {
-                "name": "Cabinet", "id": 5, "type": "list",
-                "enabled": true, "persist": true,
-                "address": "0x50000014", "defaultval": 1,
-                "options": [
-                    { "value": 0, "name": "Cocktail (2-player)" },
-                    { "value": 1, "name": "Upright" }
-                ]
             }
         ],
         "messages": []
