@@ -1,6 +1,14 @@
 # openFPGA Pac-Man — Dev Guide
 
-A real HDL Analogue Pocket core. It ports the BSD-licensed MiSTer Arcade-Pacman RTL into an APF (Analogue Pocket Framework) wrapper. Roadmap and architecture live in `PLAN.md`; user-facing docs in `README.md`.
+A real HDL Analogue Pocket core. It currently wraps the BSD-licensed MiSTer Arcade-Pacman RTL in an APF (Analogue Pocket Framework) wrapper, but that is the *starting point*, not the goal — see the fidelity rule below. Roadmap and architecture live in `PLAN.md`; user-facing docs in `README.md`.
+
+## Fidelity — board-accuracy is THE rule (read first)
+
+The goal of this project is **original-cabinet / schematic accuracy**. Not parity with any existing core. When you implement, fix, or verify anything, the source of truth is the **Pac-Man hardware itself — the schematics, the PCB, the original board behaviour** — and contributors who have cross-checked against them (e.g. **boogerman**, who re-derived this hardware schematic-accurately).
+
+- **Do NOT treat the MiSTer Arcade-Pacman core as the accuracy bar.** Our vendored RTL currently *is* that core (MikeJ's 2006 FPGAArcade model), and it carries known synchronization/alignment imperfections vs the real board. "Matches MiSTer" is **not** good enough. MiSTer is at most a convenience reference for the IO map (IN0/IN1/DSW bit layout) — never the timing or behaviour standard.
+- When in doubt, check the **schematics** and **MAME's `pacman` driver**, and prefer a schematic-derived implementation over a ported one. Reference boogerman's work where available.
+- The standing fidelity debt: re-derive/correct the base RTL's timing against the schematics (or adopt a schematic-accurate base). Until then, the core is "faithful to MiSTer", which is below the bar.
 
 ## What this is
 
