@@ -136,8 +136,17 @@ begin
 	prom_cs <= '1' when dn_addr(15 downto 14) = "11" else '0';
 	gfx_cs  <= '1' when dn_addr(15 downto 13) = "100" else '0';
 
-	-- invert sprite position when flip_screen mode is enabled. offset x positions
-	xy <= not sprite_xy_ram_temp when flip_screen = '0' else sprite_xy_ram_temp - 19 when I_AB(0) = '1' else sprite_xy_ram_temp - 15 + to_integer(unsigned'("" & (not (I_AB(1) and I_AB(2)) xor I_AB(3)) & "0"));
+	-- invert sprite position when flip_screen mode is enabled. offset x positions.
+	-- upright: the board nudges the first three sprites (0,1,2 = Pac-Man + first two
+	-- ghosts) by 1px on the even (sy) byte -- MAME's m_xoffsethack (sy+1), which is
+	-- (not B)-1 in our complemented load domain. odd (sx) byte and sprites 3-7 stay
+	-- the plain complement, so their (already board-correct) placement is unchanged.
+	xy <= (not sprite_xy_ram_temp) - 1
+	          when flip_screen = '0' and I_AB(0) = '0'
+	               and I_AB(3) = '0' and not (I_AB(2) = '1' and I_AB(1) = '1')
+	      else not sprite_xy_ram_temp when flip_screen = '0'
+	      else sprite_xy_ram_temp - 19 when I_AB(0) = '1'
+	      else sprite_xy_ram_temp - 15 + to_integer(unsigned'("" & (not (I_AB(1) and I_AB(2)) xor I_AB(3)) & "0"));
 
 	-- ram enable is low when HBLANK_L is 0 (for sprite access) or
 	-- 2H is low (for cpu writes)
